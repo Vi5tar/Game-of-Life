@@ -1,0 +1,8 @@
+{
+   "only": [
+   "*.babel",
+   "*.jsx",
+   "*.es6"
+   ],
+   "presets": ["react", "env"]
+  }
