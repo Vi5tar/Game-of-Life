@@ -32,58 +32,110 @@ var deadCell = {
   float: 'left'
 };
 
-var Tile = function (_React$Component) {
-  _inherits(Tile, _React$Component);
+var LivingTile = function (_React$Component) {
+  _inherits(LivingTile, _React$Component);
 
-  function Tile(props) {
-    _classCallCheck(this, Tile);
+  function LivingTile(props) {
+    _classCallCheck(this, LivingTile);
 
-    var _this = _possibleConstructorReturn(this, (Tile.__proto__ || Object.getPrototypeOf(Tile)).call(this, props));
-
-    _this.state = {
-      status: 'Dead'
-    };
-    return _this;
+    return _possibleConstructorReturn(this, (LivingTile.__proto__ || Object.getPrototypeOf(LivingTile)).call(this, props));
   }
 
-  _createClass(Tile, [{
+  _createClass(LivingTile, [{
     key: 'render',
     value: function render() {
-      if (this.state.status === 'Alive') {
-        return React.createElement('div', { style: livingCell });
-      } else {
-        return React.createElement('div', { style: deadCell });
-      }
+      return React.createElement('div', { style: livingCell });
     }
   }]);
 
-  return Tile;
+  return LivingTile;
 }(React.Component);
 
 ;
 
-var Board = function (_React$Component2) {
-  _inherits(Board, _React$Component2);
+var DeadTile = function (_React$Component2) {
+  _inherits(DeadTile, _React$Component2);
+
+  function DeadTile(props) {
+    _classCallCheck(this, DeadTile);
+
+    return _possibleConstructorReturn(this, (DeadTile.__proto__ || Object.getPrototypeOf(DeadTile)).call(this, props));
+  }
+
+  _createClass(DeadTile, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement('div', { style: deadCell });
+    }
+  }]);
+
+  return DeadTile;
+}(React.Component);
+
+;
+
+var Board = function (_React$Component3) {
+  _inherits(Board, _React$Component3);
 
   function Board(props) {
     _classCallCheck(this, Board);
 
-    return _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
+    var _this3 = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
+
+    _this3.state = {
+      status: []
+    };
+    _this3.addStatus = _this3.addStatus.bind(_this3);
+    _this3.createStatus = _this3.createStatus.bind(_this3);
+    return _this3;
   }
 
   _createClass(Board, [{
-    key: 'render',
-    value: function render() {
-      var boardCreate = [];
+    key: 'addStatus',
+    value: function addStatus() {
+      var blip = this.state.status;
+      var random = Math.random() > .5;
+      if (random) {
+        blip.push('Alive');
+      } else {
+        blip.push('Dead');
+      }
+      this.setState({
+        status: blip
+      });
+    }
+  }, {
+    key: 'createStatus',
+    value: function createStatus() {
       for (var x = 0; x < 16; x++) {
         for (var y = 0; y < 16; y++) {
-          boardCreate.push(React.createElement(Tile, null));
+          this.addStatus();
         }
       }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var boardCreate = this.state.status.map(function mapper(thing, index) {
+        if (thing === 'Alive') {
+          return React.createElement(LivingTile, null);
+        } else {
+          return React.createElement(DeadTile, null);
+        }
+      });
       return React.createElement(
         'div',
-        { style: board },
-        boardCreate
+        null,
+        React.createElement(
+          'div',
+          { style: board },
+          boardCreate
+        ),
+        React.createElement(
+          'button',
+          { onClick: this.createStatus },
+          'Go'
+        )
       );
     }
   }]);

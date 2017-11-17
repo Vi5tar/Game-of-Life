@@ -22,52 +22,64 @@ const deadCell = {
   float: 'left'
 }
 
-
-
-class Tile extends React.Component {
+class LivingTile extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      status: 'Dead'
-    }
   }
-
   render() {
-    if (this.state.status === 'Alive') {
-      return (
-        <div style={livingCell}>
+    return (<div style={livingCell}/>);
+  }
+};
 
-        </div>
-      );
-    } else {
-      return (
-        <div style={deadCell}>
-
-        </div>
-      );
-    }
+class DeadTile extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (<div style={deadCell}/>);
   }
 };
 
 class Board extends React.Component {
   constructor(props) {
     super(props);
-
-  };
-
-  render() {
-    const boardCreate = [];
-    for(var x = 0; x < 16; x++) {
-        for(var y = 0; y < 16; y++) {
-            boardCreate.push(<Tile />);
-        }
+    this.state = {
+      status: []
+    };
+    this.addStatus = this.addStatus.bind(this);
+    this.createStatus = this.createStatus.bind(this);
+  }
+  addStatus() {
+    const blip = this.state.status;
+    const random = Math.random() > .5;
+    if (random) {
+      blip.push('Alive');
+    } else {
+      blip.push('Dead');
     }
-    return (
+    this.setState({status: blip});
+  }
+  createStatus() {
+    for (var x = 0; x < 16; x++) {
+      for (var y = 0; y < 16; y++) {
+        this.addStatus();
+      }
+    }
+  }
+  render() {
+    const boardCreate = this.state.status.map(function mapper(thing, index) {
+      if (thing === 'Alive') {
+        return <LivingTile/>
+      } else {
+        return <DeadTile/>
+      }
+    })
+    return (<div>
       <div style={board}>
         {boardCreate}
       </div>
-    );
+      <button onClick={this.createStatus}>Go</button>
+    </div>);
   }
 }
-ReactDOM.render(
-  <Board/>, document.getElementById("lifeGame"));
+ReactDOM.render(<Board/>, document.getElementById("lifeGame"));
