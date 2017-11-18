@@ -22,6 +22,8 @@ const deadCell = {
   float: 'left'
 }
 
+var pause = 0;
+
 class LivingTile extends React.Component {
   constructor(props) {
     super(props);
@@ -48,9 +50,27 @@ class Board extends React.Component {
     };
     this.addStatus = this.addStatus.bind(this);
     this.createStatus = this.createStatus.bind(this);
+    this.clearStatus = this.clearStatus.bind(this);
+    this.changeStatus = this.changeStatus.bind(this);
+    this.pause = this.pause.bind(this);
   }
+  changeStatus() {
+    var blap = this.state.status;
+    for (var i = 0; i < this.state.status.length; i++){
+      const random1 = Math.random() > .5;
+      if (random1) {
+        blap[i] = 'Alive';
+      } else {
+        blap[i] = 'Dead';
+      }
+    }
+    this.setState({
+      status: blap
+    });
+  }
+
   addStatus() {
-    const blip = this.state.status;
+    var blip = this.state.status;
     const random = Math.random() > .5;
     if (random) {
       blip.push('Alive');
@@ -59,13 +79,38 @@ class Board extends React.Component {
     }
     this.setState({status: blip});
   }
+
   createStatus() {
-    for (var x = 0; x < 16; x++) {
-      for (var y = 0; y < 16; y++) {
-        this.addStatus();
+    if (this.state.status.length == 0) {
+      for (var x = 0; x < 16; x++) {
+        for (var y = 0; y < 16; y++) {
+          this.addStatus();
+        }
       }
+    } else {
+      this.changeStatus();
     }
   }
+
+  clearStatus() {
+      this.setState({status: []});
+  }
+
+  componentDidUpdate() {
+    if (pause === 0) {
+      setTimeout(this.changeStatus, 1000);
+    }
+  }
+
+  pause() {
+    if (pause === 0) {
+      pause = 1;
+    } else {
+      pause = 0;
+      this.changeStatus();
+    }
+  }
+
   render() {
     const boardCreate = this.state.status.map(function mapper(thing, index) {
       if (thing === 'Alive') {
@@ -79,6 +124,8 @@ class Board extends React.Component {
         {boardCreate}
       </div>
       <button onClick={this.createStatus}>Go</button>
+      <button onClick={this.clearStatus}>Clear</button>
+      <button onClick={this.pause}>Pause</button>
     </div>);
   }
 }

@@ -32,6 +32,8 @@ var deadCell = {
   float: 'left'
 };
 
+var _pause = 0;
+
 var LivingTile = function (_React$Component) {
   _inherits(LivingTile, _React$Component);
 
@@ -87,10 +89,29 @@ var Board = function (_React$Component3) {
     };
     _this3.addStatus = _this3.addStatus.bind(_this3);
     _this3.createStatus = _this3.createStatus.bind(_this3);
+    _this3.clearStatus = _this3.clearStatus.bind(_this3);
+    _this3.changeStatus = _this3.changeStatus.bind(_this3);
+    _this3.pause = _this3.pause.bind(_this3);
     return _this3;
   }
 
   _createClass(Board, [{
+    key: 'changeStatus',
+    value: function changeStatus() {
+      var blap = this.state.status;
+      for (var i = 0; i < this.state.status.length; i++) {
+        var random1 = Math.random() > .5;
+        if (random1) {
+          blap[i] = 'Alive';
+        } else {
+          blap[i] = 'Dead';
+        }
+      }
+      this.setState({
+        status: blap
+      });
+    }
+  }, {
     key: 'addStatus',
     value: function addStatus() {
       var blip = this.state.status;
@@ -100,17 +121,41 @@ var Board = function (_React$Component3) {
       } else {
         blip.push('Dead');
       }
-      this.setState({
-        status: blip
-      });
+      this.setState({ status: blip });
     }
   }, {
     key: 'createStatus',
     value: function createStatus() {
-      for (var x = 0; x < 16; x++) {
-        for (var y = 0; y < 16; y++) {
-          this.addStatus();
+      if (this.state.status.length == 0) {
+        for (var x = 0; x < 16; x++) {
+          for (var y = 0; y < 16; y++) {
+            this.addStatus();
+          }
         }
+      } else {
+        this.changeStatus();
+      }
+    }
+  }, {
+    key: 'clearStatus',
+    value: function clearStatus() {
+      this.setState({ status: [] });
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      if (_pause === 0) {
+        setTimeout(this.changeStatus, 1000);
+      }
+    }
+  }, {
+    key: 'pause',
+    value: function pause() {
+      if (_pause === 0) {
+        _pause = 1;
+      } else {
+        _pause = 0;
+        this.changeStatus();
       }
     }
   }, {
@@ -135,6 +180,16 @@ var Board = function (_React$Component3) {
           'button',
           { onClick: this.createStatus },
           'Go'
+        ),
+        React.createElement(
+          'button',
+          { onClick: this.clearStatus },
+          'Clear'
+        ),
+        React.createElement(
+          'button',
+          { onClick: this.pause },
+          'Pause'
         )
       );
     }
