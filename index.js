@@ -99,17 +99,18 @@ var Board = function (_React$Component3) {
     key: 'changeStatus',
     value: function changeStatus() {
       var blap = this.state.status;
-      for (var i = 0; i < this.state.status.length; i++) {
-        var random1 = Math.random() > .5;
-        if (random1) {
-          blap[i] = 'Alive';
-        } else {
-          blap[i] = 'Dead';
+      for (var i = 0; i < blap.length; i++) {
+        for (var y = 0; y < blap[i].length; y++) {
+          var random1 = Math.random() > .5;
+          if (random1) {
+            blap[i][y] = 'Alive';
+          } else {
+            blap[i][y] = 'Dead';
+          }
         }
       }
-      this.setState({
-        status: blap
-      });
+
+      this.setState({ status: blap });
     }
   }, {
     key: 'addStatus',
@@ -127,11 +128,19 @@ var Board = function (_React$Component3) {
     key: 'createStatus',
     value: function createStatus() {
       if (this.state.status.length == 0) {
+        var arr = this.state.status;
         for (var x = 0; x < 16; x++) {
+          arr.push([]);
           for (var y = 0; y < 16; y++) {
-            this.addStatus();
+            var random = Math.random() > .5;
+            if (random) {
+              arr[x].push('Alive');
+            } else {
+              arr[x].push('Dead');
+            }
           }
         }
+        this.setState({ status: arr });
       } else {
         this.changeStatus();
       }
@@ -162,11 +171,13 @@ var Board = function (_React$Component3) {
     key: 'render',
     value: function render() {
       var boardCreate = this.state.status.map(function mapper(thing, index) {
-        if (thing === 'Alive') {
-          return React.createElement(LivingTile, null);
-        } else {
-          return React.createElement(DeadTile, null);
-        }
+        return thing.map(function anotherMapper(thing2, index) {
+          if (thing2 === 'Alive') {
+            return React.createElement(LivingTile, null);
+          } else {
+            return React.createElement(DeadTile, null);
+          }
+        });
       });
       return React.createElement(
         'div',
