@@ -92,6 +92,7 @@ var Board = function (_React$Component3) {
     _this3.clearStatus = _this3.clearStatus.bind(_this3);
     _this3.changeStatus = _this3.changeStatus.bind(_this3);
     _this3.pause = _this3.pause.bind(_this3);
+    _this3.nextGeneration = _this3.nextGeneration.bind(_this3);
     return _this3;
   }
 
@@ -109,7 +110,6 @@ var Board = function (_React$Component3) {
           }
         }
       }
-
       this.setState({ status: blap });
     }
   }, {
@@ -154,7 +154,7 @@ var Board = function (_React$Component3) {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
       if (_pause === 0) {
-        setTimeout(this.changeStatus, 1000);
+        setTimeout(this.nextGeneration, 1000);
       }
     }
   }, {
@@ -165,6 +165,64 @@ var Board = function (_React$Component3) {
       } else {
         _pause = 0;
         this.changeStatus();
+      }
+    }
+  }, {
+    key: 'nextGeneration',
+    value: function nextGeneration() {
+      var statusArr = this.state.status.slice();
+      var updatedArr = [];
+
+      //clones statusArr into updatedArr
+      for (var i = 0; i < statusArr.length; i++) {
+        updatedArr[i] = statusArr[i].slice();
+      }
+
+      //gets the status of the cells neighbors
+      for (var y = 0; y < 16; y++) {
+        for (var x = 0; x < 16; x++) {
+          // top row neighbors
+          if (y == 0) {
+            var neighborStatus = [statusArr[y][x - 1], statusArr[y][x + 1], statusArr[y + 1][x - 1], statusArr[y + 1][x], statusArr[y + 1][x + 1]];
+            updatedArr[y][x] = this.gameRules(neighborStatus, statusArr[y][x]);
+            // bottom row neighbors
+          } else if (y == 15) {
+            var neighborStatus = [statusArr[y - 1][x - 1], statusArr[y - 1][x], statusArr[y - 1][x + 1], statusArr[y][x - 1], statusArr[y][x + 1]];
+            updatedArr[y][x] = this.gameRules(neighborStatus, statusArr[y][x]);
+            // all other neighbors
+          } else {
+            var neighborStatus = [statusArr[y - 1][x - 1], statusArr[y - 1][x], statusArr[y - 1][x + 1], statusArr[y][x - 1], statusArr[y][x + 1], statusArr[y + 1][x - 1], statusArr[y + 1][x], statusArr[y + 1][x + 1]];
+            updatedArr[y][x] = this.gameRules(neighborStatus, statusArr[y][x]);
+          }
+        }
+      }
+      this.setState({ status: updatedArr });
+    }
+  }, {
+    key: 'gameRules',
+    value: function gameRules(neighborStatusArgument, cell) {
+      //counts the living neighbors
+      var tempCell = '';
+      var livingNeighborCount = 0;
+
+      for (var i = 0; i < neighborStatusArgument.length; i++) {
+        if (neighborStatusArgument[i] == 'Alive') {
+          livingNeighborCount++;
+        }
+      }
+
+      //applys the game's rules and updates the tempCell's status accordingly
+      if (cell == 'Dead' && livingNeighborCount == 3) {
+        tempCell = 'Alive';
+      } else if (cell == 'Alive' && (livingNeighborCount < 2 || livingNeighborCount > 3)) {
+        tempCell = 'Dead';
+      }
+
+      //if a change occured returns the change. if not returns original value
+      if (tempCell == '') {
+        return cell;
+      } else {
+        return tempCell;
       }
     }
   }, {
@@ -201,6 +259,11 @@ var Board = function (_React$Component3) {
           'button',
           { onClick: this.pause },
           'Pause'
+        ),
+        React.createElement(
+          'button',
+          { onClick: this.nextGeneration },
+          'Next Gen'
         )
       );
     }
