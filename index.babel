@@ -205,21 +205,38 @@ class Board extends React.Component {
     }
   }
 
-  //logs the id (indexes) of the clicked cell
+  //takes the "location"/indexes of a cell as an argument and updates the cells
+  //status from alive to dead and vice versa
   cellClick(id) {
-    console.log(id);
+    const location = id.split(" ");
+    var statusArr = [];
+
+    //clones state.status to statusArr
+    for (var i = 0; i < this.state.status.length; i++) {
+      statusArr[i] = this.state.status[i].slice();
+    }
+
+    //Changes the status of the clicked cell in statusArr.
+    if (statusArr[location[0]][location[1]] == "Alive") {
+      statusArr[location[0]][location[1]] = "Dead";
+    } else if (statusArr[location[0]][location[1]] == "Dead"){
+      statusArr[location[0]][location[1]] = "Alive";
+    }
+
+    //updates state.status to statusArr
+    this.setState({status: statusArr});
   }
 
   render() {
-    //creates the board by mapping the state status. binds the indexes as an
+    //creates the board by mapping state.status. binds the indexes as an
     //argument to pass to the cellClick function. that way clicking a cell will
     //do something unique to the cell that was clicked.
     const boardCreate = this.state.status.map((thing, index) => {
       return thing.map((thing2, index2) => {
         if (thing2 === 'Alive') {
-          return <LivingTile func={this.cellClick.bind(this, index + " " + index2)}/>
+          return <LivingTile key={index + " " + index2} func={this.cellClick.bind(this, index + " " + index2)}/>
         } else {
-          return <DeadTile func={this.cellClick.bind(this, index + " " + index2)}/>
+          return <DeadTile key={index + " " + index2} func={this.cellClick.bind(this, index + " " + index2)}/>
         }
       })
     })

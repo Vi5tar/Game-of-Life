@@ -231,27 +231,44 @@ var Board = function (_React$Component3) {
       }
     }
 
-    //logs the id (indexes) of the clicked cell
+    //takes the "location"/indexes of a cell as an argument and updates the cells
+    //status from alive to dead and vice versa
 
   }, {
     key: 'cellClick',
     value: function cellClick(id) {
-      console.log(id);
+      var location = id.split(" ");
+      var statusArr = [];
+
+      //clones state.status to statusArr
+      for (var i = 0; i < this.state.status.length; i++) {
+        statusArr[i] = this.state.status[i].slice();
+      }
+
+      //Changes the status of the clicked cell in statusArr.
+      if (statusArr[location[0]][location[1]] == "Alive") {
+        statusArr[location[0]][location[1]] = "Dead";
+      } else if (statusArr[location[0]][location[1]] == "Dead") {
+        statusArr[location[0]][location[1]] = "Alive";
+      }
+
+      //updates state.status to statusArr
+      this.setState({ status: statusArr });
     }
   }, {
     key: 'render',
     value: function render() {
       var _this4 = this;
 
-      //creates the board by mapping the state status. binds the indexes as an
+      //creates the board by mapping state.status. binds the indexes as an
       //argument to pass to the cellClick function. that way clicking a cell will
       //do something unique to the cell that was clicked.
       var boardCreate = this.state.status.map(function (thing, index) {
         return thing.map(function (thing2, index2) {
           if (thing2 === 'Alive') {
-            return React.createElement(LivingTile, { func: _this4.cellClick.bind(_this4, index + " " + index2) });
+            return React.createElement(LivingTile, { key: index + " " + index2, func: _this4.cellClick.bind(_this4, index + " " + index2) });
           } else {
-            return React.createElement(DeadTile, { func: _this4.cellClick.bind(_this4, index + " " + index2) });
+            return React.createElement(DeadTile, { key: index + " " + index2, func: _this4.cellClick.bind(_this4, index + " " + index2) });
           }
         });
       });
