@@ -46,7 +46,9 @@ var LivingTile = function (_React$Component) {
   _createClass(LivingTile, [{
     key: 'render',
     value: function render() {
-      return React.createElement('div', { style: livingCell });
+      return React.createElement('div', {
+        style: livingCell,
+        onClick: this.props.func });
     }
   }]);
 
@@ -67,7 +69,9 @@ var DeadTile = function (_React$Component2) {
   _createClass(DeadTile, [{
     key: 'render',
     value: function render() {
-      return React.createElement('div', { style: deadCell });
+      return React.createElement('div', {
+        style: deadCell,
+        onClick: this.props.func });
     }
   }]);
 
@@ -93,6 +97,7 @@ var Board = function (_React$Component3) {
     _this3.changeStatus = _this3.changeStatus.bind(_this3);
     _this3.pause = _this3.pause.bind(_this3);
     _this3.nextGeneration = _this3.nextGeneration.bind(_this3);
+    _this3.cellClick = _this3.cellClick.bind(_this3);
     return _this3;
   }
 
@@ -225,15 +230,28 @@ var Board = function (_React$Component3) {
         return tempCell;
       }
     }
+
+    //logs the id (indexes) of the clicked cell
+
+  }, {
+    key: 'cellClick',
+    value: function cellClick(id) {
+      console.log(id);
+    }
   }, {
     key: 'render',
     value: function render() {
-      var boardCreate = this.state.status.map(function mapper(thing, index) {
-        return thing.map(function anotherMapper(thing2, index) {
+      var _this4 = this;
+
+      //creates the board by mapping the state status. binds the indexes as an
+      //argument to pass to the cellClick function. that way clicking a cell will
+      //do something unique to the cell that was clicked.
+      var boardCreate = this.state.status.map(function (thing, index) {
+        return thing.map(function (thing2, index2) {
           if (thing2 === 'Alive') {
-            return React.createElement(LivingTile, null);
+            return React.createElement(LivingTile, { func: _this4.cellClick.bind(_this4, index + " " + index2) });
           } else {
-            return React.createElement(DeadTile, null);
+            return React.createElement(DeadTile, { func: _this4.cellClick.bind(_this4, index + " " + index2) });
           }
         });
       });

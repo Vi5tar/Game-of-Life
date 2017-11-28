@@ -29,7 +29,10 @@ class LivingTile extends React.Component {
     super(props);
   }
   render() {
-    return (<div style={livingCell}/>);
+    return (
+      <div
+        style={livingCell}
+        onClick={this.props.func}/>);
   }
 };
 
@@ -38,7 +41,10 @@ class DeadTile extends React.Component {
     super(props);
   }
   render() {
-    return (<div style={deadCell}/>);
+    return (
+      <div
+        style={deadCell}
+        onClick={this.props.func}/>);
   }
 };
 
@@ -54,6 +60,7 @@ class Board extends React.Component {
     this.changeStatus = this.changeStatus.bind(this);
     this.pause = this.pause.bind(this);
     this.nextGeneration = this.nextGeneration.bind(this);
+    this.cellClick = this.cellClick.bind(this);
   }
 
   changeStatus() {
@@ -198,13 +205,21 @@ class Board extends React.Component {
     }
   }
 
+  //logs the id (indexes) of the clicked cell
+  cellClick(id) {
+    console.log(id);
+  }
+
   render() {
-    const boardCreate = this.state.status.map(function mapper(thing, index) {
-      return thing.map(function anotherMapper(thing2, index) {
+    //creates the board by mapping the state status. binds the indexes as an
+    //argument to pass to the cellClick function. that way clicking a cell will
+    //do something unique to the cell that was clicked.
+    const boardCreate = this.state.status.map((thing, index) => {
+      return thing.map((thing2, index2) => {
         if (thing2 === 'Alive') {
-          return <LivingTile/>
+          return <LivingTile func={this.cellClick.bind(this, index + " " + index2)}/>
         } else {
-          return <DeadTile/>
+          return <DeadTile func={this.cellClick.bind(this, index + " " + index2)}/>
         }
       })
     })
