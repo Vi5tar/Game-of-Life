@@ -54,7 +54,6 @@ class Board extends React.Component {
     this.state = {
       status: []
     };
-    this.addStatus = this.addStatus.bind(this);
     this.createStatus = this.createStatus.bind(this);
     this.clearStatus = this.clearStatus.bind(this);
     this.changeStatus = this.changeStatus.bind(this);
@@ -63,6 +62,7 @@ class Board extends React.Component {
     this.cellClick = this.cellClick.bind(this);
   }
 
+  //re randomizes the cells status
   changeStatus() {
     var blap = this.state.status;
     for (var i = 0; i < blap.length; i++) {
@@ -78,17 +78,7 @@ class Board extends React.Component {
     this.setState({status: blap});
   }
 
-  addStatus() {
-    var blip = this.state.status;
-    const random = Math.random() > .5;
-    if (random) {
-      blip.push('Alive');
-    } else {
-      blip.push('Dead');
-    }
-    this.setState({status: blip});
-  }
-
+  //initializes status by randomly assigning Alive or Dead to all the cells
   createStatus() {
     if (this.state.status.length == 0) {
       var arr = this.state.status;
@@ -119,12 +109,16 @@ class Board extends React.Component {
     }
   }
 
+  componentDidMount() {
+      this.createStatus();
+  }
+
   pause() {
     if (pause === 0) {
       pause = 1;
     } else {
       pause = 0;
-      this.changeStatus();
+      this.nextGeneration();
     }
   }
 

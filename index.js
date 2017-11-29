@@ -91,7 +91,6 @@ var Board = function (_React$Component3) {
     _this3.state = {
       status: []
     };
-    _this3.addStatus = _this3.addStatus.bind(_this3);
     _this3.createStatus = _this3.createStatus.bind(_this3);
     _this3.clearStatus = _this3.clearStatus.bind(_this3);
     _this3.changeStatus = _this3.changeStatus.bind(_this3);
@@ -100,6 +99,9 @@ var Board = function (_React$Component3) {
     _this3.cellClick = _this3.cellClick.bind(_this3);
     return _this3;
   }
+
+  //re randomizes the cells status
+
 
   _createClass(Board, [{
     key: 'changeStatus',
@@ -117,18 +119,9 @@ var Board = function (_React$Component3) {
       }
       this.setState({ status: blap });
     }
-  }, {
-    key: 'addStatus',
-    value: function addStatus() {
-      var blip = this.state.status;
-      var random = Math.random() > .5;
-      if (random) {
-        blip.push('Alive');
-      } else {
-        blip.push('Dead');
-      }
-      this.setState({ status: blip });
-    }
+
+    //initializes status by randomly assigning Alive or Dead to all the cells
+
   }, {
     key: 'createStatus',
     value: function createStatus() {
@@ -163,13 +156,18 @@ var Board = function (_React$Component3) {
       }
     }
   }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.createStatus();
+    }
+  }, {
     key: 'pause',
     value: function pause() {
       if (_pause === 0) {
         _pause = 1;
       } else {
         _pause = 0;
-        this.changeStatus();
+        this.nextGeneration();
       }
     }
   }, {
