@@ -23,6 +23,7 @@ const deadCell = {
 }
 
 var pause = 0;
+var delayOneSec;
 
 class LivingTile extends React.Component {
   constructor(props) {
@@ -105,7 +106,7 @@ class Board extends React.Component {
 
   componentDidUpdate() {
     if (pause === 0) {
-      setTimeout(this.nextGeneration, 1000);
+      delayOneSec = setTimeout(this.nextGeneration, 1000);
     }
   }
 
@@ -113,8 +114,10 @@ class Board extends React.Component {
       this.createStatus();
   }
 
+  //pauses or resumes the game
   pause() {
     if (pause === 0) {
+      clearTimeout(delayOneSec);
       pause = 1;
     } else {
       pause = 0;

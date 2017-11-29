@@ -33,6 +33,7 @@ var deadCell = {
 };
 
 var _pause = 0;
+var delayOneSec;
 
 var LivingTile = function (_React$Component) {
   _inherits(LivingTile, _React$Component);
@@ -152,7 +153,7 @@ var Board = function (_React$Component3) {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
       if (_pause === 0) {
-        setTimeout(this.nextGeneration, 1000);
+        delayOneSec = setTimeout(this.nextGeneration, 1000);
       }
     }
   }, {
@@ -160,10 +161,14 @@ var Board = function (_React$Component3) {
     value: function componentDidMount() {
       this.createStatus();
     }
+
+    //pauses or resumes the game
+
   }, {
     key: 'pause',
     value: function pause() {
       if (_pause === 0) {
+        clearTimeout(delayOneSec);
         _pause = 1;
       } else {
         _pause = 0;
