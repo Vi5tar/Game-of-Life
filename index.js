@@ -144,10 +144,25 @@ var Board = function (_React$Component3) {
         this.changeStatus();
       }
     }
+
+    //assigns all cells status to "Dead"
+
   }, {
     key: 'clearStatus',
     value: function clearStatus() {
-      this.setState({ status: [] });
+      var statusArr = [];
+
+      for (var i = 0; i < this.state.status.length; i++) {
+        statusArr[i] = this.state.status[i].slice();
+      }
+
+      for (var k = 0; k < statusArr.length; k++) {
+        for (var n = 0; n < statusArr[k].length; n++) {
+          statusArr[k][n] = 'Dead';
+        }
+      }
+
+      this.setState({ status: statusArr });
     }
   }, {
     key: 'componentDidUpdate',
@@ -311,3 +326,4 @@ var Board = function (_React$Component3) {
 }(React.Component);
 
 ReactDOM.render(React.createElement(Board, null), document.getElementById("lifeGame"));
+//# sourceMappingURL=C:\Users\Travis\Documents\GitHub\Game-of-Life\index.js.map
