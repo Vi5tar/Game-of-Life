@@ -107,12 +107,20 @@ var Board = function (_React$Component3) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.createStatus();
+      delayOneSec = setTimeout(this.nextGeneration, 1000);
     }
+
+    // checks for living cells.
+
   }, {
-    key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
-      if (_pause === 0) {
-        delayOneSec = setTimeout(this.nextGeneration, 1000);
+    key: 'allDead',
+    value: function allDead() {
+      for (var a = 0; a < this.state.status.length; a++) {
+        for (var b = 0; b < this.state.status[a].length; b++) {
+          if (this.state.status[a][b] == 'Alive') {
+            return false;
+          }
+        }
       }
     }
 
@@ -226,6 +234,9 @@ var Board = function (_React$Component3) {
       //updates state.status to statusArr
       this.setState({ status: statusArr });
     }
+
+    //determines what the next generation will look like
+
   }, {
     key: 'nextGeneration',
     value: function nextGeneration() {
@@ -255,8 +266,16 @@ var Board = function (_React$Component3) {
           }
         }
       }
-      this.setState({ status: updatedArr, genCount: this.state.genCount + 1 });
+
+      this.setState({ status: updatedArr });
+      if (_pause === 0 && this.allDead() === false) {
+        this.setState({ genCount: this.state.genCount + 1 });
+        delayOneSec = setTimeout(this.nextGeneration, 1000);
+      }
     }
+
+    //applies the game's rules
+
   }, {
     key: 'gameRules',
     value: function gameRules(neighborStatusArgument, cell) {
@@ -270,7 +289,7 @@ var Board = function (_React$Component3) {
         }
       }
 
-      //applys the game's rules and updates the tempCell's status accordingly
+      //applies the game's rules and updates the tempCell's status accordingly
       if (cell == 'Dead' && livingNeighborCount == 3) {
         tempCell = 'Alive';
       } else if (cell == 'Alive' && (livingNeighborCount < 2 || livingNeighborCount > 3)) {

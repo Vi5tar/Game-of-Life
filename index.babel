@@ -69,11 +69,17 @@ class Board extends React.Component {
 
   componentDidMount() {
       this.createStatus();
+      delayOneSec = setTimeout(this.nextGeneration, 1000);
   }
 
-  componentDidUpdate() {
-    if (pause === 0) {
-      delayOneSec = setTimeout(this.nextGeneration, 1000);
+  // checks for living cells.
+  allDead() {
+    for (var a = 0; a < this.state.status.length; a++) {
+      for (var b = 0; b < this.state.status[a].length; b++) {
+        if (this.state.status[a][b] == 'Alive') {
+          return false;
+        }
+      }
     }
   }
 
@@ -170,6 +176,7 @@ class Board extends React.Component {
     this.setState({status: statusArr});
   }
 
+  //determines what the next generation will look like
   nextGeneration() {
     var statusArr = this.state.status.slice();
     var updatedArr = [];
@@ -218,9 +225,15 @@ class Board extends React.Component {
         }
       }
     }
-    this.setState({status: updatedArr, genCount: this.state.genCount + 1});
+
+    this.setState({status: updatedArr});
+    if (pause === 0 && this.allDead() === false) {
+      this.setState({genCount: this.state.genCount + 1});
+      delayOneSec = setTimeout(this.nextGeneration, 1000);
+    }
   }
 
+  //applies the game's rules
   gameRules(neighborStatusArgument, cell) {
     //counts the living neighbors
     var tempCell = '';
@@ -232,7 +245,7 @@ class Board extends React.Component {
       }
     }
 
-    //applys the game's rules and updates the tempCell's status accordingly
+    //applies the game's rules and updates the tempCell's status accordingly
     if (cell == 'Dead' && livingNeighborCount == 3) {
       tempCell = 'Alive';
     } else if (cell == 'Alive' && (livingNeighborCount < 2 || livingNeighborCount > 3)) {
