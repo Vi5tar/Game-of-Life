@@ -93,32 +93,26 @@ var Board = function (_React$Component3) {
       status: []
     };
     _this3.createStatus = _this3.createStatus.bind(_this3);
-    _this3.clearStatus = _this3.clearStatus.bind(_this3);
     _this3.changeStatus = _this3.changeStatus.bind(_this3);
+    _this3.clearStatus = _this3.clearStatus.bind(_this3);
     _this3.pause = _this3.pause.bind(_this3);
-    _this3.nextGeneration = _this3.nextGeneration.bind(_this3);
+    _this3.resume = _this3.resume.bind(_this3);
     _this3.cellClick = _this3.cellClick.bind(_this3);
+    _this3.nextGeneration = _this3.nextGeneration.bind(_this3);
     return _this3;
   }
 
-  //re randomizes the cells status
-
-
   _createClass(Board, [{
-    key: 'changeStatus',
-    value: function changeStatus() {
-      var blap = this.state.status;
-      for (var i = 0; i < blap.length; i++) {
-        for (var y = 0; y < blap[i].length; y++) {
-          var random1 = Math.random() > .5;
-          if (random1) {
-            blap[i][y] = 'Alive';
-          } else {
-            blap[i][y] = 'Dead';
-          }
-        }
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.createStatus();
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      if (_pause === 0) {
+        delayOneSec = setTimeout(this.nextGeneration, 1000);
       }
-      this.setState({ status: blap });
     }
 
     //initializes status by randomly assigning Alive or Dead to all the cells
@@ -145,6 +139,25 @@ var Board = function (_React$Component3) {
       }
     }
 
+    //re randomizes the cells status
+
+  }, {
+    key: 'changeStatus',
+    value: function changeStatus() {
+      var blap = this.state.status;
+      for (var i = 0; i < blap.length; i++) {
+        for (var y = 0; y < blap[i].length; y++) {
+          var random1 = Math.random() > .5;
+          if (random1) {
+            blap[i][y] = 'Alive';
+          } else {
+            blap[i][y] = 'Dead';
+          }
+        }
+      }
+      this.setState({ status: blap });
+    }
+
     //assigns all cells status to "Dead"
 
   }, {
@@ -163,21 +176,10 @@ var Board = function (_React$Component3) {
       }
 
       this.setState({ status: statusArr });
-    }
-  }, {
-    key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
-      if (_pause === 0) {
-        delayOneSec = setTimeout(this.nextGeneration, 1000);
-      }
-    }
-  }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      this.createStatus();
+      this.pause();
     }
 
-    //pauses or resumes the game
+    //pauses the game
 
   }, {
     key: 'pause',
@@ -185,10 +187,43 @@ var Board = function (_React$Component3) {
       if (_pause === 0) {
         clearTimeout(delayOneSec);
         _pause = 1;
-      } else {
+      }
+    }
+
+    //resumes the game
+
+  }, {
+    key: 'resume',
+    value: function resume() {
+      if (_pause === 1) {
         _pause = 0;
         this.nextGeneration();
       }
+    }
+
+    //takes the "location"/indexes of a cell as an argument and updates the cells
+    //status from alive to dead and vice versa
+
+  }, {
+    key: 'cellClick',
+    value: function cellClick(id) {
+      var location = id.split(" ");
+      var statusArr = [];
+
+      //clones state.status to statusArr
+      for (var i = 0; i < this.state.status.length; i++) {
+        statusArr[i] = this.state.status[i].slice();
+      }
+
+      //Changes the status of the clicked cell in statusArr.
+      if (statusArr[location[0]][location[1]] == "Alive") {
+        statusArr[location[0]][location[1]] = "Dead";
+      } else if (statusArr[location[0]][location[1]] == "Dead") {
+        statusArr[location[0]][location[1]] = "Alive";
+      }
+
+      //updates state.status to statusArr
+      this.setState({ status: statusArr });
     }
   }, {
     key: 'nextGeneration',
@@ -248,31 +283,6 @@ var Board = function (_React$Component3) {
         return tempCell;
       }
     }
-
-    //takes the "location"/indexes of a cell as an argument and updates the cells
-    //status from alive to dead and vice versa
-
-  }, {
-    key: 'cellClick',
-    value: function cellClick(id) {
-      var location = id.split(" ");
-      var statusArr = [];
-
-      //clones state.status to statusArr
-      for (var i = 0; i < this.state.status.length; i++) {
-        statusArr[i] = this.state.status[i].slice();
-      }
-
-      //Changes the status of the clicked cell in statusArr.
-      if (statusArr[location[0]][location[1]] == "Alive") {
-        statusArr[location[0]][location[1]] = "Dead";
-      } else if (statusArr[location[0]][location[1]] == "Dead") {
-        statusArr[location[0]][location[1]] = "Alive";
-      }
-
-      //updates state.status to statusArr
-      this.setState({ status: statusArr });
-    }
   }, {
     key: 'render',
     value: function render() {
@@ -300,8 +310,8 @@ var Board = function (_React$Component3) {
         ),
         React.createElement(
           'button',
-          { onClick: this.createStatus },
-          'Go'
+          { onClick: this.resume },
+          'Run'
         ),
         React.createElement(
           'button',
@@ -326,4 +336,3 @@ var Board = function (_React$Component3) {
 }(React.Component);
 
 ReactDOM.render(React.createElement(Board, null), document.getElementById("lifeGame"));
-//# sourceMappingURL=C:\Users\Travis\Documents\GitHub\Game-of-Life\index.js.map

@@ -56,27 +56,22 @@ class Board extends React.Component {
       status: []
     };
     this.createStatus = this.createStatus.bind(this);
-    this.clearStatus = this.clearStatus.bind(this);
     this.changeStatus = this.changeStatus.bind(this);
+    this.clearStatus = this.clearStatus.bind(this);
     this.pause = this.pause.bind(this);
-    this.nextGeneration = this.nextGeneration.bind(this);
+    this.resume = this.resume.bind(this);
     this.cellClick = this.cellClick.bind(this);
+    this.nextGeneration = this.nextGeneration.bind(this);
   }
 
-  //re randomizes the cells status
-  changeStatus() {
-    var blap = this.state.status;
-    for (var i = 0; i < blap.length; i++) {
-      for (var y = 0; y < blap[i].length; y++) {
-        const random1 = Math.random() > .5;
-        if (random1) {
-          blap[i][y] = 'Alive';
-        } else {
-          blap[i][y] = 'Dead';
-        }
-      }
+  componentDidMount() {
+      this.createStatus();
+  }
+
+  componentDidUpdate() {
+    if (pause === 0) {
+      delayOneSec = setTimeout(this.nextGeneration, 1000);
     }
-    this.setState({status: blap});
   }
 
   //initializes status by randomly assigning Alive or Dead to all the cells
@@ -100,6 +95,22 @@ class Board extends React.Component {
     }
   }
 
+  //re randomizes the cells status
+  changeStatus() {
+    var blap = this.state.status;
+    for (var i = 0; i < blap.length; i++) {
+      for (var y = 0; y < blap[i].length; y++) {
+        const random1 = Math.random() > .5;
+        if (random1) {
+          blap[i][y] = 'Alive';
+        } else {
+          blap[i][y] = 'Dead';
+        }
+      }
+    }
+    this.setState({status: blap});
+  }
+
   //assigns all cells status to "Dead"
   clearStatus() {
     var statusArr = [];
@@ -115,27 +126,45 @@ class Board extends React.Component {
     }
 
     this.setState({status: statusArr});
+    this.pause();
   }
 
-  componentDidUpdate() {
-    if (pause === 0) {
-      delayOneSec = setTimeout(this.nextGeneration, 1000);
-    }
-  }
-
-  componentDidMount() {
-      this.createStatus();
-  }
-
-  //pauses or resumes the game
+  //pauses the game
   pause() {
     if (pause === 0) {
       clearTimeout(delayOneSec);
       pause = 1;
-    } else {
+    }
+  }
+
+  //resumes the game
+  resume() {
+    if (pause === 1) {
       pause = 0;
       this.nextGeneration();
     }
+  }
+
+  //takes the "location"/indexes of a cell as an argument and updates the cells
+  //status from alive to dead and vice versa
+  cellClick(id) {
+    const location = id.split(" ");
+    var statusArr = [];
+
+    //clones state.status to statusArr
+    for (var i = 0; i < this.state.status.length; i++) {
+      statusArr[i] = this.state.status[i].slice();
+    }
+
+    //Changes the status of the clicked cell in statusArr.
+    if (statusArr[location[0]][location[1]] == "Alive") {
+      statusArr[location[0]][location[1]] = "Dead";
+    } else if (statusArr[location[0]][location[1]] == "Dead"){
+      statusArr[location[0]][location[1]] = "Alive";
+    }
+
+    //updates state.status to statusArr
+    this.setState({status: statusArr});
   }
 
   nextGeneration() {
@@ -215,28 +244,6 @@ class Board extends React.Component {
     }
   }
 
-  //takes the "location"/indexes of a cell as an argument and updates the cells
-  //status from alive to dead and vice versa
-  cellClick(id) {
-    const location = id.split(" ");
-    var statusArr = [];
-
-    //clones state.status to statusArr
-    for (var i = 0; i < this.state.status.length; i++) {
-      statusArr[i] = this.state.status[i].slice();
-    }
-
-    //Changes the status of the clicked cell in statusArr.
-    if (statusArr[location[0]][location[1]] == "Alive") {
-      statusArr[location[0]][location[1]] = "Dead";
-    } else if (statusArr[location[0]][location[1]] == "Dead"){
-      statusArr[location[0]][location[1]] = "Alive";
-    }
-
-    //updates state.status to statusArr
-    this.setState({status: statusArr});
-  }
-
   render() {
     //creates the board by mapping state.status. binds the indexes as an
     //argument to pass to the cellClick function. that way clicking a cell will
@@ -254,7 +261,7 @@ class Board extends React.Component {
       <div style={board}>
         {boardCreate}
       </div>
-      <button onClick={this.createStatus}>Go</button>
+      <button onClick={this.resume}>Run</button>
       <button onClick={this.clearStatus}>Clear</button>
       <button onClick={this.pause}>Pause</button>
       <button onClick={this.nextGeneration}>Next Gen</button>
