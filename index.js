@@ -90,7 +90,8 @@ var Board = function (_React$Component3) {
     var _this3 = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
 
     _this3.state = {
-      status: []
+      status: [],
+      genCount: 0
     };
     _this3.createStatus = _this3.createStatus.bind(_this3);
     _this3.changeStatus = _this3.changeStatus.bind(_this3);
@@ -175,7 +176,7 @@ var Board = function (_React$Component3) {
         }
       }
 
-      this.setState({ status: statusArr });
+      this.setState({ status: statusArr, genCount: 0 });
       this.pause();
     }
 
@@ -254,7 +255,7 @@ var Board = function (_React$Component3) {
           }
         }
       }
-      this.setState({ status: updatedArr });
+      this.setState({ status: updatedArr, genCount: this.state.genCount + 1 });
     }
   }, {
     key: 'gameRules',
@@ -303,6 +304,8 @@ var Board = function (_React$Component3) {
       return React.createElement(
         'div',
         null,
+        'Generation: ',
+        this.state.genCount,
         React.createElement(
           'div',
           { style: board },
