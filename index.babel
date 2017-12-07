@@ -1,14 +1,15 @@
 const board = {
-  backgroundColor: 'gray',
-  width: 192,
-  height: 192
+  width: 384, // set to boardDims * 12
+  height: 384, // set to boardDims * 12
+  margin: 'auto'
 }
 
 const livingCell = {
   width: 10,
   height: 10,
   margin: 1,
-  backgroundColor: 'red',
+  borderRadius: 5,
+  backgroundColor: '#F0FB8F', //F0FB8F EEF98D
   display: 'inline-block',
   float: 'left'
 };
@@ -17,9 +18,9 @@ const deadCell = {
   width: 10,
   height: 10,
   margin: 1,
-  backgroundColor: 'black',
+  //backgroundColor: 'black',
   display: 'inline-block',
-  float: 'left'
+  float: 'left',
 }
 
 var pause = 0;
@@ -56,7 +57,8 @@ class Board extends React.Component {
     super(props);
     this.state = {
       status: [],
-      genCount: 0
+      genCount: 0,
+      boardDims: 32
     };
     this.createStatus = this.createStatus.bind(this);
     this.changeStatus = this.changeStatus.bind(this);
@@ -87,9 +89,9 @@ class Board extends React.Component {
   createStatus() {
     if (this.state.status.length == 0) {
       var arr = this.state.status;
-      for (var x = 0; x < 16; x++) {
+      for (var x = 0; x < this.state.boardDims; x++) {
         arr.push([]);
-        for (var y = 0; y < 16; y++) {
+        for (var y = 0; y < this.state.boardDims; y++) {
           const random = Math.random() > .5;
           if (random) {
             arr[x].push('Alive');
@@ -187,8 +189,8 @@ class Board extends React.Component {
     }
 
     //gets the status of the cells neighbors
-    for (var y = 0; y < 16; y++) {
-      for (var x = 0; x < 16; x++) {
+    for (var y = 0; y < statusArr.length; y++) {
+      for (var x = 0; x < statusArr[y].length; x++) {
         // top row neighbors
         if (y == 0) {
           var neighborStatus = [
@@ -200,7 +202,7 @@ class Board extends React.Component {
           ];
           updatedArr[y][x] = this.gameRules(neighborStatus, statusArr[y][x]);
           // bottom row neighbors
-        } else if (y == 15){
+        } else if (y == statusArr.length - 1){
           var neighborStatus = [
             statusArr[y - 1][x - 1],
             statusArr[y - 1][x],
@@ -274,14 +276,17 @@ class Board extends React.Component {
       })
     })
     return (<div>
+      <div id='generation'>
       Generation: {this.state.genCount}
+      </div>
       <div style={board}>
         {boardCreate}
       </div>
-      <button onClick={this.resume}>Run</button>
-      <button onClick={this.clearStatus}>Clear</button>
-      <button onClick={this.pause}>Pause</button>
-      <button onClick={this.nextGeneration}>Next Gen</button>
+      <button type="button" className="btn btn-dark" onClick={this.resume}>Run</button>
+      <button type="button" className="btn btn-dark" onClick={this.clearStatus}>Clear</button>
+      <button type="button" className="btn btn-dark" onClick={this.pause}>Pause</button>
+      {/*<button onClick={this.nextGeneration}>Next Gen</button> Used for debugging
+      Advnaces generation one at a time*/}
     </div>);
   }
 }

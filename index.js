@@ -9,16 +9,17 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var board = {
-  backgroundColor: 'gray',
-  width: 192,
-  height: 192
+  width: 384, // set to boardDims * 12
+  height: 384, // set to boardDims * 12
+  margin: 'auto'
 };
 
 var livingCell = {
   width: 10,
   height: 10,
   margin: 1,
-  backgroundColor: 'red',
+  borderRadius: 5,
+  backgroundColor: '#F0FB8F', //F0FB8F EEF98D
   display: 'inline-block',
   float: 'left'
 };
@@ -27,7 +28,7 @@ var deadCell = {
   width: 10,
   height: 10,
   margin: 1,
-  backgroundColor: 'black',
+  //backgroundColor: 'black',
   display: 'inline-block',
   float: 'left'
 };
@@ -91,7 +92,8 @@ var Board = function (_React$Component3) {
 
     _this3.state = {
       status: [],
-      genCount: 0
+      genCount: 0,
+      boardDims: 32
     };
     _this3.createStatus = _this3.createStatus.bind(_this3);
     _this3.changeStatus = _this3.changeStatus.bind(_this3);
@@ -131,9 +133,9 @@ var Board = function (_React$Component3) {
     value: function createStatus() {
       if (this.state.status.length == 0) {
         var arr = this.state.status;
-        for (var x = 0; x < 16; x++) {
+        for (var x = 0; x < this.state.boardDims; x++) {
           arr.push([]);
-          for (var y = 0; y < 16; y++) {
+          for (var y = 0; y < this.state.boardDims; y++) {
             var random = Math.random() > .5;
             if (random) {
               arr[x].push('Alive');
@@ -249,14 +251,14 @@ var Board = function (_React$Component3) {
       }
 
       //gets the status of the cells neighbors
-      for (var y = 0; y < 16; y++) {
-        for (var x = 0; x < 16; x++) {
+      for (var y = 0; y < statusArr.length; y++) {
+        for (var x = 0; x < statusArr[y].length; x++) {
           // top row neighbors
           if (y == 0) {
             var neighborStatus = [statusArr[y][x - 1], statusArr[y][x + 1], statusArr[y + 1][x - 1], statusArr[y + 1][x], statusArr[y + 1][x + 1]];
             updatedArr[y][x] = this.gameRules(neighborStatus, statusArr[y][x]);
             // bottom row neighbors
-          } else if (y == 15) {
+          } else if (y == statusArr.length - 1) {
             var neighborStatus = [statusArr[y - 1][x - 1], statusArr[y - 1][x], statusArr[y - 1][x + 1], statusArr[y][x - 1], statusArr[y][x + 1]];
             updatedArr[y][x] = this.gameRules(neighborStatus, statusArr[y][x]);
             // all other neighbors
@@ -323,8 +325,12 @@ var Board = function (_React$Component3) {
       return React.createElement(
         'div',
         null,
-        'Generation: ',
-        this.state.genCount,
+        React.createElement(
+          'div',
+          { id: 'generation' },
+          'Generation: ',
+          this.state.genCount
+        ),
         React.createElement(
           'div',
           { style: board },
@@ -332,23 +338,18 @@ var Board = function (_React$Component3) {
         ),
         React.createElement(
           'button',
-          { onClick: this.resume },
+          { type: 'button', className: 'btn btn-dark', onClick: this.resume },
           'Run'
         ),
         React.createElement(
           'button',
-          { onClick: this.clearStatus },
+          { type: 'button', className: 'btn btn-dark', onClick: this.clearStatus },
           'Clear'
         ),
         React.createElement(
           'button',
-          { onClick: this.pause },
+          { type: 'button', className: 'btn btn-dark', onClick: this.pause },
           'Pause'
-        ),
-        React.createElement(
-          'button',
-          { onClick: this.nextGeneration },
-          'Next Gen'
         )
       );
     }

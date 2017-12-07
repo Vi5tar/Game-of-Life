@@ -1,1 +1,22 @@
+body, html {
+  height: 100%;
+  background-color: #6F6960;
+}
 
+#lifeGame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  color: white;
+  font-family: 'Bungee', cursive;
+}
+
+#generation {
+  margin: 10px 0px;
+}
+
+.btn {
+  margin: 10px 1px;
+}
